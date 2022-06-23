@@ -1,3 +1,4 @@
+const fs = require("fs")
 const flightsData = require("../models/flights.json"); //load flight data json
 
 exports.example = (req, res) => {
@@ -8,8 +9,21 @@ exports.example = (req, res) => {
 }
 
 exports.addFlight = (req, res) => {
-    console.log("add flight")
-    res.send("Flight added")
+    let countFlights = flightsData.length
+    flightsData.push(req.body.newFlight)
+    let stringData = JSON.stringify(flightsData, null, 2)
+    fs.writeFile('models/flights.json', stringData, function (error) {
+        if (error) {
+            return res.status(500).json({
+                "message": error
+            })
+        } else {
+            return res.status(200).json({
+                "message": "New Flight Created"
+            })
+        }
+    })
+
 }
 
 exports.fetchFlights = (req, res) => {
@@ -29,19 +43,20 @@ exports.fetchFlights = (req, res) => {
 }
 
 exports.fetchFlight = (req, res) => {
-    let flightId = Number(req.params.id)
+    let flightId = Number(req.params.id) //ensure params is a NUMBER to ensure logic compatibilty
     //console.log(flightId)
-    if (typeof flightId === "number") {
+    if (typeof flightId === "number") { //security check
         //returns data if JSON file contains that ID
         let foundFlight = flightsData.find(flight => {
-            return Number(flight.id) === flightId
+            return Number(flight.id) === flightId //compares params and id in JSON file
         })
-        if (foundFlight) {
+        if (foundFlight) { //if ID exist, deliver JSON response
             return res.status(200).json({
                 foundFlight
             })
         }
     }
+    //returns 404 error and message if ID is not found
     return res.status(404).json({
         "message": "Flight ID does not exist"
     })

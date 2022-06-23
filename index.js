@@ -6,9 +6,12 @@ const {
 const flights = require("./controllers/flightController");
 const models = require("./models/Flight");
 const routes = require("./routes/flightRoute");
-const fs = require("fs")
 
 const app = express();
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({
+  extended: true
+})) // for parsing application/x-www-form-urlencoded
 
 app.use(json());
 
