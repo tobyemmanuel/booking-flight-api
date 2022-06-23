@@ -29,8 +29,22 @@ exports.fetchFlights = (req, res) => {
 }
 
 exports.fetchFlight = (req, res) => {
-    console.log("fetch flight")
-    res.send("Flight fetching")
+    let flightId = Number(req.params.id)
+    //console.log(flightId)
+    if (typeof flightId === "number") {
+        //returns data if JSON file contains that ID
+        let foundFlight = flightsData.find(flight => {
+            return Number(flight.id) === flightId
+        })
+        if (foundFlight) {
+            return res.status(200).json({
+                foundFlight
+            })
+        }
+    }
+    return res.status(404).json({
+        "message": "Flight ID does not exist"
+    })
 }
 
 exports.updateFlight = (req, res) => {
