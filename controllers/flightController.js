@@ -2,16 +2,21 @@ const fs = require("fs")
 const flightsData = require("../models/flights.json"); //load flight data json
 
 exports.example = (req, res) => {
-    //console.log("example")
     return res.status(404).json({
         "message": "No Parameters or Route Added to URL"
     })
 }
 
 exports.addFlight = (req, res) => {
-    let countFlights = flightsData.length
-    flightsData.push(req.body.newFlight)
-    let stringData = JSON.stringify(flightsData, null, 2)
+    let generateId = Math.max(...flightsData.map(o => o.id)) + 1 //generates unique ID from last data's ID
+    let newData = req.body.newFlight //assign new data to variable
+    //give ID to new flight data
+    let updatedNewFlight = {
+        ...newData,
+        id: generateId
+    }
+    flightsData.push(updatedNewFlight) // add new data to the exisiting data
+    let stringData = JSON.stringify(flightsData, null, 2) //tringify data
     fs.writeFile('models/flights.json', stringData, function (error) {
         if (error) {
             return res.status(500).json({
@@ -27,7 +32,6 @@ exports.addFlight = (req, res) => {
 }
 
 exports.fetchFlights = (req, res) => {
-    //console.log(flightsData)
     //check if data exists in the JSON file
     if (Object.keys(flightsData).length > 0) {
         //returns data if JSON file is not empty
@@ -63,8 +67,44 @@ exports.fetchFlight = (req, res) => {
 }
 
 exports.updateFlight = (req, res) => {
-    console.log("update flights")
-    res.send("Flight update")
+    let flightId = Number(req.params.id) //ensure params is a NUMBER to ensure logic compatibilty
+    let newData = req.body.updateFlight //assign new data to variable
+    if (typeof flightId === "number") { //security check
+        //returns data if JSON file contains that ID
+        let foundFlight = flightsData.find(flight => {
+            return Number(flight.id) === flightId //compares params and id in JSON file
+        })
+        if (foundFlight) {
+            //get index of the original data from JSON file
+            let getIndex = flightsData.indexOf(foundFlight)
+            //Since ID cannot be modified, add the ID to the new Data
+            let updatedNewFlight = {
+                ...newData,
+                id: flightId
+            }
+            //replace the old data in th flight JSON file with the update and the id
+            flightsData.splice(getIndex, 1, updatedNewFlight)
+            let stringData = JSON.stringify(flightsData, null, 2) //tringify data
+            fs.writeFile('models/flights.json', stringData, function (error) {
+                if (error) {
+                    //output errors if any
+                    return res.status(500).json({
+                        "message": error
+                    })
+                } else {
+                    //deliver a positive JSON response
+                    return res.status(200).json({
+                        "message": "Flight Update Successful"
+                    })
+                }
+            })
+        } else {
+            //returns 404 error and message if ID is not found
+            return res.status(404).json({
+                "message": "Flight ID does not exist"
+            })
+        }
+    }
 }
 
 exports.deleteFlight = (req, res) => {
