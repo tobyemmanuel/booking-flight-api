@@ -7,6 +7,20 @@ exports.index = (req, res) => {
     })
 }
 
+/*
+IMPLEMENTATION
+The addFlight route uses POST METHOD to fetch the data 
+and updates JSON file with push and fs.writeFile.
+It automatically assigns a unique id to the new data..
+{
+    "newFlight": {
+        "title": "flight to China",
+        "time": "2pm",
+        "price": 2000,
+        "date": "26-06-2022"
+    }
+}
+*/
 exports.addFlight = (req, res) => {
     let generateId = Math.max(...flightsData.map(o => o.id)) + 1 //generates unique ID from last data's ID
     let newData = req.body.newFlight //assign new data to variable
@@ -31,6 +45,10 @@ exports.addFlight = (req, res) => {
 
 }
 
+/*
+IMPLEMENTATION
+The fetchFlights route uses GET METHOD to fetch all the data entries.
+*/
 exports.fetchFlights = (req, res) => {
     //check if data exists in the JSON file
     if (Object.keys(flightsData).length > 0) {
@@ -46,6 +64,10 @@ exports.fetchFlights = (req, res) => {
 
 }
 
+/*
+IMPLEMENTATION
+The fetchFlight route uses GET METHOD with id parameter to fetch all the data entries.
+*/
 exports.fetchFlight = (req, res) => {
     let flightId = Number(req.params.id) //ensure params is a NUMBER to ensure logic compatibilty
     //console.log(flightId)
@@ -66,6 +88,19 @@ exports.fetchFlight = (req, res) => {
     })
 }
 
+/*
+IMPLEMENTATION
+The updateFlight route uses id parameter with the PUT Method
+ to fetch the data and updates JSON file with splice and fs.writeFile.
+{
+    "updateFlight": {
+        "title": "flight to China",
+        "time": "2pm",
+        "price": 2000,
+        "date": "26-06-2022"
+    }
+}
+*/
 exports.updateFlight = (req, res) => {
     let flightId = Number(req.params.id) //ensure params is a NUMBER to ensure logic compatibilty
     let newData = req.body.updateFlight //assign new data to variable
@@ -107,6 +142,10 @@ exports.updateFlight = (req, res) => {
     }
 }
 
+/*
+IMPLEMENTATION
+The fetchFlights route uses DELETE METHOD with id parameter to fetch and delete the data.
+*/
 exports.deleteFlight = (req, res) => {
     console.log("delete flight")
     let flightId = Number(req.params.id) //ensure params is a NUMBER to ensure logic compatibilty
