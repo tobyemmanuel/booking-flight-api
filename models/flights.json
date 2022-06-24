@@ -12,19 +12,5 @@
     "price": 2000,
     "date": "26-06-2022",
     "id": 2
-  },
-  {
-    "id": 3,
-    "title": "flight to Nigera",
-    "time": "1pm",
-    "price": 280000,
-    "date": "26-06-2022"
-  },
-  {
-    "title": "flight to China",
-    "time": "2pm",
-    "price": 2000,
-    "date": "26-06-2022",
-    "id": 4
   }
 ]

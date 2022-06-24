@@ -109,5 +109,34 @@ exports.updateFlight = (req, res) => {
 
 exports.deleteFlight = (req, res) => {
     console.log("delete flight")
-    res.send("Flight delete")
+    let flightId = Number(req.params.id) //ensure params is a NUMBER to ensure logic compatibilty
+    //console.log(flightId)
+    if (typeof flightId === "number") { //security check
+        //returns data if JSON file contains that ID
+        let delFlight = flightsData.filter(flight => {
+            return flight.id !== flightId
+        })
+        if (delFlight) { //if ID exist and removed
+            let stringData = JSON.stringify(delFlight, null, 2) //tringify data
+            fs.writeFile('models/flights.json', stringData, function (error) {
+                if (error) {
+                    //output errors if any
+                    return res.status(500).json({
+                        "message": error
+                    })
+                } else {
+                    //deliver a positive JSON response
+                    return res.status(200).json({
+                        "message": "Flight Deletion Successful"
+                    })
+                }
+            })
+        } else {
+            //returns 404 error and message if ID is not found
+            return res.status(404).json({
+                "message": "Flight ID does not exist"
+            })
+        }
+    }
+
 }
