@@ -1,7 +1,7 @@
 const fs = require("fs")
 const flightsData = require("../models/flights.json"); //load flight data json
 
-exports.example = (req, res) => {
+exports.index = (req, res) => {
     return res.status(404).json({
         "message": "No Parameters or Route Added to URL"
     })
